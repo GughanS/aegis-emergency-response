@@ -28,15 +28,15 @@ import './styles.css'; // <-- MOVED to index.js
 
 // --- Configuration ---
 const firebaseConfig = {
-    apiKey: "AIzaSyDIJwx314tXfjpZpJ7EpBRn8QZ0V1duwQc",
-    authDomain: "aegis-project-2f6a9.firebaseapp.com",
-    projectId: "aegis-project-2f6a9",
-    storageBucket: "aegis-project-2f6a9.appspot.com",
-    messagingSenderId: "254245404836",
-    appId: "1:254245404836:web:62182b19d6f32455956631"
+    apiKey: "------------------",
+    authDomain: "------------------",
+    projectId: "--------------------",
+    storageBucket: "--------------------",
+    messagingSenderId: "--------------------",
+    appId: "---------------------------"
 };
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyD3phEVM-_zOr5lh4xncnPHPeDSiOy3Nvg";
+const GOOGLE_MAPS_API_KEY = "------------------------";
 const PYTHON_BACKEND_URL = "http://127.0.0.1:8000"; // URL of your local Python server
 
 // --- Firebase Initialization ---
