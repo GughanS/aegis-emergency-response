@@ -37,7 +37,7 @@ const firebaseConfig = {
 };
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyD3phEVM-_zOr5lh4xncnPHPeDSiOy3Nvg";
-const PYTHON_BACKEND_URL = "http://127.0.0.1:8000"; // URL of your local Python server
+const PYTHON_BACKEND_URL = "[https://aegis-backend.onrender.com](https://aegis-backend.onrender.com)"; // URL of your local Python server
 
 // --- Firebase Initialization ---
 const app = initializeApp(firebaseConfig);
