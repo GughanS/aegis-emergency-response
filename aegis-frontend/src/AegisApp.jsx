@@ -24,7 +24,8 @@ import {
 } from 'firebase/firestore';
 
 // --- Import CSS ---
-import './styles.css'; // <-- MOVED to index.js
+import './styles.css'; 
+
 
 // --- Configuration ---
 const firebaseConfig = {
