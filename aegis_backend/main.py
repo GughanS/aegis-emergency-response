@@ -51,7 +51,7 @@ app.add_middleware(
 # 1. Gemini AI Configuration
 # We try to get the API key from environment variables (best practice).
 # If not set, we fall back to a hardcoded key for demo/development.
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY = "AIzaSyDdbjUGdVhZTSZkqUovmnbIcQGVuSua0w0"
 if not GEMINI_API_KEY:
     GEMINI_API_KEY = "AIzaSyDdbjUGdVhZTSZkqUovmnbIcQGVuSua0w0" # Fallback key
     print("WARNING: GEMINI_API_KEY environment variable not set. Using hardcoded key for demo.")
