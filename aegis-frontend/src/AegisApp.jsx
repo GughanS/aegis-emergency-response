@@ -29,16 +29,16 @@ import './styles.css';
 
 // --- Configuration ---
 const firebaseConfig = {
-    apiKey: "AIzaSyDIJwx314tXfjpZpJ7EpBRn8QZ0V1duwQc",
-    authDomain: "aegis-project-2f6a9.firebaseapp.com",
-    projectId: "aegis-project-2f6a9",
-    storageBucket: "aegis-project-2f6a9.appspot.com",
-    messagingSenderId: "254245404836",
-    appId: "1:254245404836:web:62182b19d6f32455956631"
+    apiKey: "---------------------",
+    authDomain: "-----------------",
+    projectId: "------------------",
+    storageBucket: "--------------",
+    messagingSenderId: "----------",
+    appId: "----------"
 };
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyD3phEVM-_zOr5lh4xncnPHPeDSiOy3Nvg";
-const PYTHON_BACKEND_URL = "[https://aegis-backend.onrender.com](https://aegis-backend.onrender.com)"; // URL of your local Python server
+const GOOGLE_MAPS_API_KEY = "MAPS_API";
+const PYTHON_BACKEND_URL = "backend_URL"; // URL of your local Python server
 
 // --- Firebase Initialization ---
 const app = initializeApp(firebaseConfig);
