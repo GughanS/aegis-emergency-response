@@ -33,7 +33,7 @@ app = FastAPI(
 # --- Security & CORS ---
 # Configure CORS to allow the React frontend (running on localhost:3000)
 # to communicate with this backend (running on localhost:8000).
-NETLIFY_APP_URL = "[https://aegisemergencyresponse.netlify.app](https://aegisemergency.netlify.app)" # <-- YOUR REAL URL
+NETLIFY_APP_URL = "netlify_url" # <-- YOUR REAL URL
 
 app.add_middleware(
     CORSMiddleware,
@@ -51,9 +51,9 @@ app.add_middleware(
 # 1. Gemini AI Configuration
 # We try to get the API key from environment variables (best practice).
 # If not set, we fall back to a hardcoded key for demo/development.
-GEMINI_API_KEY = "AIzaSyDdbjUGdVhZTSZkqUovmnbIcQGVuSua0w0"
+GEMINI_API_KEY = "Gemini_API"
 if not GEMINI_API_KEY:
-    GEMINI_API_KEY = "AIzaSyDdbjUGdVhZTSZkqUovmnbIcQGVuSua0w0" # Fallback key
+    GEMINI_API_KEY = "" # Fallback key
     print("WARNING: GEMINI_API_KEY environment variable not set. Using hardcoded key for demo.")
 
 try:
