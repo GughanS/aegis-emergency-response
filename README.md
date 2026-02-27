@@ -1,89 +1,132 @@
-### Aegis: AI-Powered Emergency Response Platform
-Aegis is a mobile-first, real-time emergency management and risk prediction platform designed for urban environments. It connects citizens facing emergencies directly with authority dispatch centers, using an intelligent risk model to prioritize alerts and streamline the response process.
+<div align="center">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white" alt="Firebase" />
+  <img src="https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" />
+  <br>
+  <h1>Aegis: AI-Powered Emergency Response Platform</h1>
+  <p>A modern, full-stack emergency management system integrating real-time ML risk prediction and specialized generative AI assistance for citizens and command center authorities.</p>
+</div>
 
-### Table of Contents
-Key Features
+---
 
-App Architecture
+## Table of Contents
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
-Getting Started
+---
 
-Contributing
+## Key Features
 
-License
+### Authority Command Center
+- **Live Alert Triage:** A centralized dashboard that receives instant citizen SOS pings via Firebase real-time listeners.
+- **AI Dispatch Briefings:** Utilizes the Google Gemini AI to auto-generate concise, actionable situation briefings for dispatch operators based on incoming alert data.
+- **SOP Assistant:** An integrated GPT-style assistant where authorities can query standard operating procedures for various emergency types.
+- **Dynamic Risk Assessment:** Leverages a Python Machine Learning model to evaluate geographic coordinates and contextual data to assign a High, Medium, or Low risk severity to every alert.
 
-### Key Features
-### Real-time Alerts & Dashboard: 
-The platform provides a live, centralized dashboard for authorities to view incoming alerts on an interactive map. New alerts appear instantly without needing to refresh the page.
+### Citizen Safety App
+- **Intuitive SOS Flow:** Designed for high-stress situations. Citizens can report emergencies manually or via voice/text descriptions.
+- **AI Report Summarization:** Gemini AI instantly analyzes free-form text/voice reports to extract the emergency type, severity, and a quick summary.
+- **Real-time Safety Guidance:** Generates customized safety instructions (e.g., "While you wait for help...") based on the specific emergency and the user's mapped location.
+- **Localization:** Includes multi-language support (English and Tamil) for better accessibility.
 
-### Proactive Risk Prediction: 
-A rule-based machine learning model analyzes each alert based on location (flood-prone zones in Chennai) and user vulnerability status (e.g., elderly, visually impaired). This generates a risk level (High, Medium, Low) that helps authorities prioritize critical situations.
+---
 
-### Intuitive Citizen Interface: 
-A simple, mobile-friendly interface allows citizens to quickly send an alert with just a few taps, providing essential information to responders instantly.
+## Architecture
 
-### Secure & Scalable Backend: 
-Built on Firebase, the application uses a robust, serverless backend that handles authentication and real-time data efficiently, ensuring reliable performance even under high load.
+Aegis has been modernized into a decoupled, robust client-server architecture.
 
-# Resilient Offline Communication: 
-The app can form a Bluetooth mesh network with nearby devices to relay critical alerts even when cellular networks are down. This ensures that alerts can reach a connected device and be uploaded to the cloud, guaranteeing delivery in crisis situations.
+### Frontend (React)
+- **Framework:** React.js Single Page Application (SPA).
+- **Styling:** Custom CSS featuring a premium, dark-mode glassmorphism design system (backdrop-filter) and Google 'Outfit' typography.
+- **State & Routing:** Modular component structure (screens/, components/) to comfortably handle Auth, Citizen, and Authority views.
+- **Maps:** Deep integration with the Google Maps Javascript API for pinpointing incidents.
 
-### App Architecture
-The application follows a client-server architecture, with the client (the web app) communicating directly with the Firebase backend. This allows for a fast, responsive, and highly scalable application.
+### Backend (FastAPI / Python)
+- **Framework:** High-performance FastAPI server running on Uvicorn.
+- **AI Integration:** Direct connection to `google-generativeai` for complex text analysis and SOP generation.
+- **ML Engine:** Loads a `.joblib` machine learning model to simulate geographic disaster risk calculations.
+- **Security:** Standardized CORS middleware and `.env` secret management.
 
-# Client (Frontend)
-The entire application logic and user interface are contained within a single HTML file, making it a true single-page application (SPA).
+### Database (Firebase)
+- **Auth:** Firebase Authentication handles secure login/registration for authority and citizen user roles.
+- **Firestore:** NoSQL document database acts as the single source of truth, synchronizing active alerts across all connected clients instantly.
 
-HTML, CSS, & JavaScript: The user interface is built with standard web technologies, styled with Tailwind CSS for a clean, modern look. The JavaScript handles all the app's logic, from user authentication to real-time rendering.
+---
 
-Local Risk Model: The risk prediction logic is embedded directly in the frontend, eliminating the need for a separate backend server and allowing the app to run on Firebase's free Spark plan.
+## Getting Started
 
-# Backend (Firebase)
-The backend is entirely serverless, powered by Google's Firebase services.
+To run Aegis locally, you need Node.js and Python 3.11+ installed.
 
-Firebase Hosting: Deploys the frontend web application to a live URL.
-
-Firebase Authentication: Handles all user sign-in and sign-up processes, managing both citizen and authority accounts securely.
-
-Cloud Firestore: Serves as the real-time database, storing all user data and emergency alerts.
-
-# Data Flow:
-A citizen's alert is sent directly from the frontend to Firestore. The authority dashboard, which is constantly listening to the Firestore database, receives the new alert in real time and updates the map and queue automatically.
-
-# Getting Started
-To run this project, you need to have Node.js and the Firebase CLI installed.
-
-# Clone the repository:
-
-git clone https://github.com/GUGHAN-3001/aegis-emergency-response.git
+### 1. Clone the repository
+```bash
+git clone https://github.com/GughanS/aegis-emergency-response.git
 cd aegis-emergency-response
+```
 
-# Initialize Firebase:
+### 2. Start the FastAPI Backend
+```bash
+cd aegis_backend
+python -m venv .venv
+source .venv/bin/activate  # Or `.venv\Scripts\activate` on Windows
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
 
-firebase init
+### 3. Start the React Frontend
+```bash
+cd aegis-frontend
+npm install
+npm start
+```
+The application will be available at `http://localhost:3000`.
 
-Follow the prompts to connect your project to Firebase and select Hosting. When prompted for the public directory, enter frontend.
+---
 
-# Deploy to Live URL:
+## Environment Variables
 
-firebase deploy --only hosting
+You must configure your own API keys for the services to work. Create `.env` files in the respective directories or configure your deployment host.
 
-After deployment, the terminal will provide a live URL for your application.
+**Backend (`aegis_backend/.env`):**
+```env
+GEMINI_API_KEY=your_google_ai_studio_api_key_here
+```
 
-# Contributing
-We welcome contributions! If you would like to help improve this project, please follow these steps:
+**Frontend (`aegis-frontend/src/utils/config.js`):**
+*Note: Ensure your Firebase Config and Maps keys are set in this file.*
+```javascript
+export const GOOGLE_MAPS_API_KEY = "your_maps_api_key";
+// ... Firebase config object
+```
 
-Fork the repository.
+---
 
-Create a new branch (git checkout -b feature/your-feature-name).
+## Deployment
 
-Make your changes.
+Aegis is fully configured for containerized and static delivery.
 
-Commit your changes (git commit -m 'feat: Add new feature').
+### Backend (Render)
+A `Dockerfile` and `render.yaml` are included in the `aegis_backend` directory. Connecting this repository to Render.com will automatically build and deploy the FastAPI container. Remember to set the `GEMINI_API_KEY` in the Render dashboard.
 
-Push to the branch (git push origin feature/your-feature-name).
+### Frontend (Netlify)
+The `aegis-frontend` directory includes a `netlify.toml` file configured for single-page applications. Connect the folder to Netlify to deploy the static build seamlessly.
 
-Open a Pull Request.
+---
 
-# License
+## Contributing
+Contributions are welcome! Please follow these steps:
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+---
+
+## License
 This project is licensed under the MIT License - see the LICENSE file for details.
