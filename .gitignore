@@ -1,0 +1,23 @@
+# Python
+.env
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node
+node_modules/
+build/
+dist/
+
+# IDEs and Text Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific ignores
+*.txt
+aegis-frontend/src/AegisApp_part1.txt
+git_status.txt

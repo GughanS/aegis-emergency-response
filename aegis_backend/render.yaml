@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: aegis-backend
+    env: docker
+    region: ohio
+    plan: free
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false # Must be set in Render dashboard
+      - key: PORT
+        value: 8000

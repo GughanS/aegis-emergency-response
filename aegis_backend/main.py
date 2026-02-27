@@ -22,6 +22,14 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 import google.generativeai as genai
 import uvicorn
+import logging
+from dotenv import load_dotenv
+
+# --- Logging Setup ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger("AegisBackend")
+
+load_dotenv()
 
 # --- Application Setup ---
 app = FastAPI(
@@ -50,18 +58,20 @@ app.add_middleware(
 
 # 1. Gemini AI Configuration
 # We try to get the API key from environment variables (best practice).
-# If not set, we fall back to a hardcoded key for demo/development.
-GEMINI_API_KEY = "AIzaSyDdbjUGdVhZTSZkqUovmnbIcQGVuSua0w0"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
 if not GEMINI_API_KEY:
-    GEMINI_API_KEY = "AIzaSyDdbjUGdVhZTSZkqUovmnbIcQGVuSua0w0" # Fallback key
-    print("WARNING: GEMINI_API_KEY environment variable not set. Using hardcoded key for demo.")
+    logger.error("WARNING: GEMINI_API_KEY environment variable not set. Gemini endpoints will fail.")
 
 try:
-    genai.configure(api_key=GEMINI_API_KEY)
-    gemini_model = genai.GenerativeModel('gemini-2.5-flash')
-    print("Gemini AI model configured successfully.")
+    if GEMINI_API_KEY:
+        genai.configure(api_key=GEMINI_API_KEY)
+        gemini_model = genai.GenerativeModel('gemini-2.5-flash')
+        logger.info("Gemini AI model configured successfully.")
+    else:
+        gemini_model = None
 except Exception as e:
-    print(f"Error configuring Gemini AI: {e}")
+    logger.error(f"Error configuring Gemini AI: {e}")
     gemini_model = None
 
 # 2. Machine Learning Model Loading
@@ -76,11 +86,11 @@ expected_model_features = [ # The exact columns the model was trained on
 
 try:
     ml_model = joblib.load(ML_MODEL_PATH)
-    print(f"Successfully loaded ML model from '{ML_MODEL_PATH}'")
+    logger.info(f"Successfully loaded ML model from '{ML_MODEL_PATH}'")
 except FileNotFoundError:
-    print(f"WARNING: '{ML_MODEL_PATH}' not found. Using dummy model.")
+    logger.warning(f"WARNING: '{ML_MODEL_PATH}' not found. Using dummy model.")
 except Exception as e:
-    print(f"Error loading ML model: {e}. Using dummy model.")
+    logger.error(f"Error loading ML model: {e}. Using dummy model.")
 
 # --- Pydantic Models (Data Validation) ---
 # These models define the *exact* JSON structure the API expects.
@@ -144,15 +154,19 @@ async def predict_risk(request: RiskRequest):
             # --- Real ML Model Prediction ---
             
             # 1. Simulate a database lookup for GIS data based on lat/lon
-            # In a real app, this would be a call to a GIS database or another API.
-            # For this demo, we create a plausible dummy row of data.
+            # Introduce variation so the ML model predicts realistically based on location changes
+            salt = (request.lat + request.lon) % 10
+            dynamic_elev = max(1, 10 + (salt * 4) - 5)
+            dynamic_coast = max(1, 5 + salt - 2)
+            dynamic_rain = max(0, 1800 - (salt * 50))
+            
             simulated_data = {
                 'lat': request.lat,
                 'lon': request.lon,
-                'elevation_meters': 50,  # Simulated
-                'dist_to_coast_km': 10,   # Simulated
+                'elevation_meters': dynamic_elev,  # Simulated & Dynamic
+                'dist_to_coast_km': dynamic_coast,   # Simulated & Dynamic
                 'dist_to_major_river_km': 5, # Simulated
-                'avg_annual_rainfall_mm': 1800, # Simulated
+                'avg_annual_rainfall_mm': dynamic_rain, # Simulated & Dynamic
                 'seismic_zone': 3, # Simulated
                 'state': 'Tamil Nadu', # Simulated
                 'district': 'Chennai', # Simulated
@@ -173,7 +187,7 @@ async def predict_risk(request: RiskRequest):
             risk_reason = f"Live model prediction based on location and simulated GIS data."
 
         except Exception as e:
-            print(f"Error during ML prediction: {e}")
+            logger.error(f"Error during ML prediction: {e}")
             raise HTTPException(status_code=500, detail=f"ML prediction error: {e}")
 
     return {"risk_level": risk_level, "risk_reason": risk_reason}
@@ -201,7 +215,7 @@ async def analyze_report(request: ReportAnalysisRequest):
         json_response = response.text.strip().replace("```json", "").replace("```", "")
         return {"analysis": json_response} # Send back the JSON string
     except Exception as e:
-        print(f"Error calling Gemini API: {e}")
+        logger.error(f"Error calling Gemini API in analyze_report: {e}")
         raise HTTPException(status_code=500, detail=f"Gemini API error: {e}")
 
 @app.post("/generate_briefing")
@@ -232,7 +246,7 @@ async def generate_briefing(payload: BriefingPayload):
         response = gemini_model.generate_content(prompt)
         return {"briefing": response.text}
     except Exception as e:
-        print(f"Error calling Gemini API: {e}")
+        logger.error(f"Error calling Gemini API in generate_briefing: {e}")
         raise HTTPException(status_code=500, detail=f"Gemini API error: {e}")
 
 @app.post("/get_sop")
@@ -256,7 +270,7 @@ async def get_sop(request: SopRequest):
         response = gemini_model.generate_content(prompt)
         return {"sop": response.text}
     except Exception as e:
-        print(f"Error calling Gemini API: {e}")
+        logger.error(f"Error calling Gemini API in get_sop: {e}")
         raise HTTPException(status_code=500, detail=f"Gemini API error: {e}")
 
 
