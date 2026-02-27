@@ -41,7 +41,7 @@ app = FastAPI(
 # --- Security & CORS ---
 # Configure CORS to allow the React frontend (running on localhost:3000)
 # to communicate with this backend (running on localhost:8000).
-NETLIFY_APP_URL = "[https://aegisemergencyresponse.netlify.app](https://aegisemergency.netlify.app)" # <-- YOUR REAL URL
+NETLIFY_APP_URL = "netlify_url" # <-- YOUR REAL URL
 
 app.add_middleware(
     CORSMiddleware,

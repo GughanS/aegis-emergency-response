@@ -13,6 +13,7 @@ import { AuthorityDashboard } from './screens/AuthorityDashboard';
 // --- Import CSS ---
 import './styles.css';
 
+
 export default function App() {
     const [user, setUser] = useState(null);
     const [role, setRole] = useState('citizen');
