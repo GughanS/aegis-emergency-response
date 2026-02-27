@@ -265,7 +265,7 @@ function ConfirmationScreen({ t, setScreen, alertType, currentLanguage }) {
     useEffect(() => {
         const fetchSop = async () => {
             try {
-                const response = await fetch(`${PYTHON_BACKEND_URL}/generate_sop`, {
+                const response = await fetch(`${PYTHON_BACKEND_URL}/get_sop`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
