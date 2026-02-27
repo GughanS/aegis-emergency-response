@@ -16,4 +16,6 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 export const GOOGLE_MAPS_API_KEY = "AIzaSyD3phEVM-_zOr5lh4xncnPHPeDSiOy3Nvg";
-export const PYTHON_BACKEND_URL = "https://aegis-backend.onrender.com";
+export const PYTHON_BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:8000"
+    : "https://aegis-backend.onrender.com";

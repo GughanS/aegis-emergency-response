@@ -238,7 +238,7 @@ async def generate_briefing(payload: BriefingPayload):
     - User Report: "{payload.details}"
     - User Vulnerability: {payload.user.get('vulnerability_status', 'None')}
     - Static Risk: {payload.risk_level} ({payload.risk_reason})
-    - Live ML Risk: {payload.live_ml_risk.get('risk_level', 'N/A') if payload.live_ml_risk else 'N/A'}
+    - Live ML Risk: {payload.live_ml_risk.get('level', 'N/A') if payload.live_ml_risk else 'N/A'}
     
     Generate the briefing.
     """
