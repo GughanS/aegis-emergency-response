@@ -146,8 +146,16 @@ export function AuthorityDashboard({ t, user }) {
 
 function AlertCard({ alert, onSelect, isSelected }) {
     let pClass = 'priority-low';
-    if (alert.risk_level === 'High') pClass = 'priority-high';
-    else if (alert.risk_level === 'Medium') pClass = 'priority-medium';
+    let displayRisk = alert.risk_level;
+
+    const isVulnerable = alert.user?.vulnerability_status && alert.user.vulnerability_status !== 'NONE';
+
+    if (isVulnerable || alert.risk_level === 'High') {
+        pClass = 'priority-high';
+        displayRisk = isVulnerable ? 'High (Vulnerable)' : alert.risk_level;
+    } else if (alert.risk_level === 'Medium') {
+        pClass = 'priority-medium';
+    }
 
     return (
         <div
@@ -155,7 +163,7 @@ function AlertCard({ alert, onSelect, isSelected }) {
             className={`alert-card ${pClass} ${isSelected ? 'selected-alert' : ''}`}
         >
             <p className="alert-type">{alert.alert_type}</p>
-            <p className="risk-level">Risk: {alert.risk_level}</p>
+            <p className="risk-level">Risk: {displayRisk}</p>
             <p className="user-name">{alert.user.fullName || 'Unknown'}</p>
         </div>
     );
