@@ -50,9 +50,17 @@ export function AuthorityDashboard({ t, user }) {
                 return { id: d.id, ...a, user: u.exists() ? u.data() : {} };
             });
             const alerts = await Promise.all(promises);
-            // Sort by risk
+            // Sort by Vulnerability first, then by Risk Level
             const order = { "High": 3, "Medium": 2, "Low": 1 };
-            alerts.sort((a, b) => (order[b.risk_level] || 0) - (order[a.risk_level] || 0));
+            alerts.sort((a, b) => {
+                const aVuln = a.user?.vulnerability_status && a.user.vulnerability_status !== 'NONE';
+                const bVuln = b.user?.vulnerability_status && b.user.vulnerability_status !== 'NONE';
+
+                if (aVuln && !bVuln) return -1;
+                if (!aVuln && bVuln) return 1;
+
+                return (order[b.risk_level] || 0) - (order[a.risk_level] || 0);
+            });
             setActiveAlerts(alerts);
         });
         return () => unsubscribe();
