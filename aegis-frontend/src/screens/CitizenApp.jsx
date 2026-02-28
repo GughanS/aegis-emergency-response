@@ -222,7 +222,19 @@ function VoiceReportScreen({ t, setScreen, handleSendAlert, currentLanguage }) {
             });
             if (!response.ok) throw new Error('Analysis API failed');
             const data = await response.json();
-            setResult(data);
+
+            let parsedResult = data;
+            if (data.analysis) {
+                try {
+                    parsedResult = JSON.parse(data.analysis);
+                } catch (parseError) {
+                    console.error("Failed to parse AI response JSON:", parseError);
+                    // Fallback structure in case Gemini ignores formatting instructions
+                    parsedResult = { alert_type: "OTHER", summary: data.analysis, severity: "High" };
+                }
+            }
+
+            setResult(parsedResult);
             setStatus('confirm');
         } catch (error) {
             console.error("Failed to analyze report:", error);
