@@ -200,11 +200,19 @@ function SosScreen({ t, setScreen, handleSendAlert }) {
 function VoiceReportScreen({ t, setScreen, handleSendAlert, currentLanguage }) {
     const [status, setStatus] = useState('prompt');
     const [result, setResult] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const recognitionRef = useRef(null);
 
-    const handleMicClick = async () => {
-        const transcription = prompt("For this demo, please type your emergency report. AI will analyze the text.");
-        if (!transcription) return;
+    useEffect(() => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            recognitionRef.current = new SpeechRecognition();
+            recognitionRef.current.continuous = false;
+            recognitionRef.current.interimResults = false;
+        }
+    }, []);
 
+    const processTranscription = async (transcription) => {
         setStatus('analyzing');
         try {
             const response = await fetch(`${PYTHON_BACKEND_URL}/analyze_report`, {
@@ -222,18 +230,65 @@ function VoiceReportScreen({ t, setScreen, handleSendAlert, currentLanguage }) {
         }
     };
 
+    const handleMicClick = () => {
+        if (!recognitionRef.current) {
+            const transcription = prompt("Speech recognition not supported in this browser. Please type your emergency report:");
+            if (transcription) processTranscription(transcription);
+            return;
+        }
+
+        if (isRecording) {
+            recognitionRef.current.stop();
+            return;
+        }
+
+        recognitionRef.current.lang = currentLanguage === 'ta' ? 'ta-IN' : 'en-US';
+
+        recognitionRef.current.onstart = () => {
+            setIsRecording(true);
+            setStatus('recording');
+        };
+
+        recognitionRef.current.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            processTranscription(transcript);
+        };
+
+        recognitionRef.current.onerror = (event) => {
+            console.error("Speech recognition error", event.error);
+            setIsRecording(false);
+            setStatus('error');
+            alert("Microphone error. Please try again or type your report.");
+        };
+
+        recognitionRef.current.onend = () => {
+            setIsRecording(false);
+        };
+
+        try {
+            recognitionRef.current.start();
+        } catch (e) {
+            console.error("Could not start recognition:", e);
+        }
+    };
+
     return (
         <div className="citizen-app-container sos-screen">
             <h2>{t('reportTitle')}</h2>
             <div className="voice-status">
                 {status === 'prompt' && t('voicePrompt')}
+                {status === 'recording' && (currentLanguage === 'ta' ? 'கேட்கிறது... தயவுசெய்து பேசுங்கள்.' : 'Listening... Please speak.')}
                 {status === 'analyzing' && t('analysisAnalyzing')}
                 {status === 'confirm' && t('analysisConfirm')}
                 {status === 'error' && t('analysisFailed')}
             </div>
             <div className="voice-mic-container">
                 {status !== 'analyzing' ? (
-                    <button onClick={handleMicClick} className="mic-button">
+                    <button
+                        onClick={handleMicClick}
+                        className={`mic-button ${isRecording ? 'recording' : ''}`}
+                        style={isRecording ? { backgroundColor: '#ef4444', animation: 'pulse 1.5s infinite' } : {}}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0V3z" /><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z" /></svg>
                     </button>
                 ) : (
